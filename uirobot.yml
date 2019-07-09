@@ -1,0 +1,280 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template creates a single server installation of Microsoft
+  Windows Server 2016 with UiPath Robot installed and will connect it to an existing licensed Orchestrator.
+   **WARNING** This template creates Amazon EC2 Windows instance
+  and related resources. You will be billed for the AWS resources used if you
+  create a stack from this template. Also, you are solely responsible for
+  complying with the license terms for the software downloaded and installed by
+  this template. By creating a stack from this template, you are agreeing to
+  such terms.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "EC2 Configuration"
+        Parameters:
+          - VPCid
+          - Subnet
+          - SourceCidrForRDP
+          - SourceCidrForWinRM
+          - AWSRegion2AMI
+          - KeyName
+          - InstanceType
+          - adminUsername
+          - machinePassword
+      - Label:
+          default: "Robot Configuration"
+        Parameters:
+          - orchestratorUrl
+          - Tennant
+          - orchAdmin
+          - orchPassword
+          - RobotType
+    ParameterLabels:
+      VPCid:
+        default: "Existing VPC ID with Internet GW or NAT:"
+      Subnet:
+        default: "Existing Subnet ID with Internet GW or NAT:"
+      SourceCidrForRDP:
+        default: "IP CIDR from which you are likely to RDP into the instances:"
+      SourceCidrForWinRM:
+        default: "IP CIDR from which you are likely to use WinRM into the instances:"
+      AWSRegion2AMI:
+        default: "Windows 2016 OS:"
+      KeyName:
+        default: "Key Pair Name:"
+      InstanceType:
+        default: "Amazon EC2 instance type:"
+      orchestratorUrl:
+        default: "URL of an existing and licensed Orchestrator:"
+      Tennant:
+        default: "Tennant of the Orchestrator:"
+      orchAdmin:
+        default: "Administrator username of the Orchestrator:"
+      orchPassword:
+        default: "Administrator password of the Orchestrator:"
+      RobotType:
+        default: "Type of the Robot:"
+      adminUsername:
+        default: "New local admin account for the EC2 instance used by the Robot:"
+      machinePassword:
+        default: "Password for the new local admin account (also used by the Robot):"
+Parameters:
+  VPCid:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-0c1eef89ec1a1b14f
+  Subnet:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-00ce2b32838254b04
+  orchestratorUrl:
+    Type: String
+    Default: https://uipathorchestrator.com
+  Tennant:
+    Type: String
+    Default: Default
+  orchAdmin:
+    Type: String
+    Default: admin
+  orchPassword:
+    Type: String
+    Default: OrchestratorP@ssw0rd!
+  adminUsername:
+    Type: String
+    Default: new-administrator
+  machinePassword:
+    Type: String
+    Default: EC2P@ssw0rd
+  RobotType:
+    Description: Unattended, Attended, Development or Nonproduction
+    Type: String
+    Default: Unattended
+    AllowedValues:
+      - Unattended
+      - Attended
+      - Development
+      - Nonproduction
+  KeyName:
+    Type: "AWS::EC2::KeyPair::KeyName"
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair.
+    Default: WindowsKey
+  InstanceType:
+    Type: String
+    Default: t2.medium
+    AllowedValues:
+      - t2.medium
+      - m1.small
+      - m1.medium
+      - m1.large
+      - m1.xlarge
+      - m2.xlarge
+      - m2.2xlarge
+      - m2.4xlarge
+      - m3.medium
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - c1.medium
+      - c1.xlarge
+      - c3.large
+      - c3.xlarge
+      - c3.2xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - g2.2xlarge
+      - r3.large
+      - r3.xlarge
+      - r3.2xlarge
+      - r3.4xlarge
+      - r3.8xlarge
+      - i2.xlarge
+      - i2.2xlarge
+      - i2.4xlarge
+      - i2.8xlarge
+      - d2.xlarge
+      - d2.2xlarge
+      - d2.4xlarge
+      - d2.8xlarge
+      - hi1.4xlarge
+      - hs1.8xlarge
+      - cr1.8xlarge
+      - cc2.8xlarge
+      - cg1.4xlarge
+    ConstraintDescription: must be a valid EC2 instance type.
+  SourceCidrForRDP:
+    Description: >-
+      You can add rules later by modifying the created security groups e.g. 33.55.121.130/24
+    Type: String
+    MinLength: "9"
+    MaxLength: "18"
+    AllowedPattern: '^([0-9]+\.){3}[0-9]+\/[0-9]+$'
+    Default: 0.0.0.0/0
+  SourceCidrForWinRM:
+    Description: >-
+      You can add rules later by modifying the created security groups e.g. 33.55.121.130/24
+    Type: String
+    MinLength: "9"
+    MaxLength: "18"
+    AllowedPattern: '^([0-9]+\.){3}[0-9]+\/[0-9]+$'
+    Default: 0.0.0.0/0
+Mappings:
+  AWSRegion2AMI:
+    us-east-1:
+      Windows2016STD: ami-0d41aee8a57fdb850
+    us-west-2:
+      Windows2016STD: ami-0d705356e2616369c
+    us-west-1:
+      Windows2016STD: ami-000eddb6959c2403a
+    eu-west-1:
+      Windows2016STD: ami-0710d35aba99f0aa4
+    eu-west-2:
+      Windows2016STD: ami-0f9184740934f30e8
+    eu-central-1:
+      Windows2016STD: ami-09c346dac10213d49
+    ap-northeast-1:
+      Windows2016STD: ami-06506e1521d1970a6
+    ap-northeast-2:
+      Windows2016STD: ami-07ff3c5c1004e1307
+    ap-southeast-1:
+      Windows2016STD: ami-0fe0a34ed20d1e95f
+    ap-southeast-2:
+      Windows2016STD: ami-0a382fb734ac35f8d
+    ap-south-1:
+      Windows2016STD: ami-09a8de20f12de517c
+    us-east-2:
+      Windows2016STD: ami-096b2c9dc9336e7c4
+    ca-central-1:
+      Windows2016STD: ami-07c0acebd4be32641
+    sa-east-1:
+      Windows2016STD: ami-01adbf057d8fcb314
+Resources:
+  UiRobotSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Enable HTTP,HTTPS and RDP
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: "80"
+          ToPort: "80"
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: "443"
+          ToPort: "443"
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: "3389"
+          ToPort: "3389"
+          CidrIp: !Ref SourceCidrForWinRM
+        - IpProtocol: tcp
+          FromPort: "5986"
+          ToPort: "5986"
+          CidrIp: !Ref SourceCidrForWinRM
+  UiRobot:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !FindInMap
+        - AWSRegion2AMI
+        - !Ref "AWS::Region"
+        - Windows2016STD
+      SecurityGroupIds:
+        - !Ref UiRobotSecurityGroup
+      KeyName: !Ref KeyName
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: UiPathRobot
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - "<powershell> \n"
+              - "Set-ExecutionPolicy Unrestricted -force \n"
+              - "$localComputer = [adsi]\"WinNT://$env:computername\" \n"
+              - "$localUser = $localComputer.Create(\"User\", '"
+              - Ref: adminUsername
+              - "') \n"
+              - "$localUser.SetPassword('"
+              - Ref: machinePassword
+              - "') \n"
+              - "$localUser.SetInfo() \n"
+              - "$localUser.FullName = \"UiPathRobot\" \n"
+              - "$localUser.SetInfo() \n"
+              - "$localUser.Put(\"Description\", \"UiPathRobot Local Admin Account\") \n"
+              - "$localUser.SetInfo() \n"
+              - "$localUser.UserFlags = 65536 \n"
+              - "$localUser.SetInfo() \n"
+              - "$localGroup = [adsi](\"WinNT://$env:computername/Administrators,Group\") \n"
+              - "$localGroup.add(\"WinNT://$env:computername/"
+              - Ref: adminUsername
+              - "\") \n"
+              - "powershell.exe -Command Invoke-WebRequest https://raw.githubusercontent.com/hteo1337/UiRobot/master/Setup/Install-UiRobot.ps1
+                -OutFile \"C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\Install-UiRobot.ps1\" \n"
+              - "powershell.exe -ExecutionPolicy Bypass -File \"C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\Install-UiRobot.ps1\" -orchestratorUrl "
+              - Ref: orchestratorUrl
+              - " -Tennant  "
+              - Ref: Tennant
+              - " -orchAdmin  "
+              - Ref: orchAdmin
+              - " -orchPassword  "
+              - Ref: orchPassword
+              - " -adminUsername  "
+              - Ref: adminUsername
+              - " -machinePassword  "
+              - Ref: machinePassword
+              - " -RobotType  "
+              - Ref: RobotType
+              - " \n"
+              - "powershell.exe Start-Sleep -Seconds 10 ; Restart-Computer -Force"
+              - "</powershell>"
