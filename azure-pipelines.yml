@@ -10,12 +10,17 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: DownloadGitHubRelease@0
+  inputs:
+    defaultVersionType: 'latest'
+    downloadPath: '$(System.ArtifactsDirectory)/_hteo1337.UiRobot-AWS'
+    
 - task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
   displayName: 'S3 Upload: git2s3-aws'
   inputs:
     awsCredentials: aws
     regionName: 'eu-west-2'
     bucketName: 'git2s3-aws'
-    sourceFolder: '$(System.DefaultWorkingDirectory)/_hteo1337.UiRobot-AWS'
+    sourceFolder: '$(System.ArtifactsDirectory)/_hteo1337.UiRobot-AWS'
     filesAcl: 'public-read'
     createBucket: true
