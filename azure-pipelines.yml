@@ -20,6 +20,15 @@ steps:
       continueOnError: true
       condition: succeededOrFailed()
 
+# - task: DownloadGitHubRelease@0
+#   inputs:
+#       connection: 'Git2AzureDevOps'
+#       userRepository: 'hteo1337/UiRobot-AWS'
+#       defaultVersionType: 'latest'
+#       downloadPath: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/'
+#       continueOnError: true
+#       condition: succeededOrFailed()
+
 - task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
   displayName: 'S3 Upload: git-test'
   inputs:
