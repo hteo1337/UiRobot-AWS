@@ -16,14 +16,19 @@ steps:
       connection: 'Git2AzureDevOps'
       userRepository: 'hteo1337/UiRobot-AWS'
       defaultVersionType: 'latest'
-      downloadPath: '$(System.ArtifactsDirectory)'
+      downloadPath: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/'
+      continueOnError: true
+      condition: succeededOrFailed()
 
+steps:
 - task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
-  displayName: 'S3 Upload: git2s3-aws'
+  displayName: 'S3 Upload: git-test'
   inputs:
     awsCredentials: aws
     regionName: 'eu-west-2'
-    bucketName: 'git2s3-awsz'
-    sourceFolder: '$(System.ArtifactsDirectory)'
+    bucketName: 'git-test'
+    sourceFolder: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/uirobot.yml'
     filesAcl: 'public-read'
     createBucket: true
+  continueOnError: true
+  condition: succeededOrFailed()
