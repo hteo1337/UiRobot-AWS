@@ -10,10 +10,13 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
+  displayName: 'S3 Upload: git2s3-aws'
+  inputs:
+    awsCredentials: aws
+    regionName: 'eu-west-2'
+    bucketName: 'git2s3-aws'
+    sourceFolder: '$(System.DefaultWorkingDirectory)/_hteo1337.UiRobot-AWS'
+    targetFolder: UiRobots
+    filesAcl: 'public-read'
+    createBucket: true
