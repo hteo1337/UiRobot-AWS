@@ -19,7 +19,7 @@ steps:
     specificBuildWithTriggering: true
     buildVersionToDownload: 'latest'
     tags: 'latest'
-    targetPath: '$(System.ArtifactsDirectory)'
+    targetPath: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/'
 
 # - task: DownloadGitHubRelease@0
 #   inputs:
@@ -36,7 +36,7 @@ steps:
     awsCredentials: aws
     regionName: 'eu-west-2'
     bucketName: 'git-test-hteox'
-    sourceFolder: '$(System.ArtifactsDirectory)/uirobot.yml'
+    sourceFolder: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/uirobot.yml'
     filesAcl: 'public-read'
     createBucket: true
   continueOnError: true
