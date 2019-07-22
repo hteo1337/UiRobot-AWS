@@ -17,6 +17,5 @@ steps:
     regionName: 'eu-west-2'
     bucketName: 'git2s3-aws'
     sourceFolder: '$(System.DefaultWorkingDirectory)/_hteo1337.UiRobot-AWS'
-    targetFolder: UiRobots
     filesAcl: 'public-read'
     createBucket: true
