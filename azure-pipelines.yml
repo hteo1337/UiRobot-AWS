@@ -9,13 +9,20 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:    
+steps:'
+- task: DownloadGitHubRelease@0
+  displayName: 'Download GitHub Release'
+  inputs:
+    connection: Git2AzureDevOps
+    userRepository: 'hteo1337/UiRobot-AWS'
+    downloadPath: '$(System.ArtifactsDirectory)/_hteo1337_UiRobot-AWS/'
+    
 - task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
   displayName: 'S3 Upload: git2s3-aws'
   inputs:
     awsCredentials: aws
     regionName: 'eu-west-2'
     bucketName: 'git2s3-aws'
-    sourceFolder: '$(System.ArtifactsDirectory)/_hteo1337.UiRobot-AWS'
+    sourceFolder: '$(System.ArtifactsDirectory)/_hteo1337_UiRobot-AWS/'
     filesAcl: 'public-read'
     createBucket: true
