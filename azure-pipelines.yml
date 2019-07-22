@@ -15,7 +15,7 @@ steps:
   inputs:
       connection: 'Git2AzureDevOps'
       userRepository: 'hteo1337/UiRobot-AWS'
-      #defaultVersionType: 'latest'
+      defaultVersionType: 'latest'
       downloadPath: '$(System.ArtifactsDirectory)'
 
 - task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
