@@ -25,7 +25,9 @@ steps:
   inputs:
     awsCredentials: aws
     regionName: 'eu-west-2'
-    bucketName: 'git2s3-aws'
+    bucketName: 'git2s3-awsz'
     sourceFolder: '$(System.ArtifactsDirectory)'
     filesAcl: 'public-read'
     createBucket: true
+
+    
