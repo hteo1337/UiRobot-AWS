@@ -9,7 +9,7 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:'
+steps:
 - task: DownloadGitHubRelease@0
   displayName: 'Download GitHub Release'
   inputs:
