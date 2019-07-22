@@ -35,7 +35,7 @@ steps:
   inputs:
     awsCredentials: aws
     regionName: 'eu-west-2'
-    bucketName: 'git-test'
+    bucketName: 'git-test-hteox'
     sourceFolder: '$(System.DefaultWorkingDirectory)'
     filesAcl: 'public-read'
     createBucket: true
