@@ -11,14 +11,15 @@ pool:
  
 
 steps:
-- task: DownloadGitHubRelease@0
+- task: DownloadPipelineArtifact@2
   inputs:
-      connection: 'Git2AzureDevOps'
-      userRepository: 'hteo1337/UiRobot-AWS'
-      defaultVersionType: 'latest'
-      downloadPath: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/'
-      continueOnError: true
-      condition: succeededOrFailed()
+    buildType: 'specific'
+    project: '0c694140-b8c6-45da-ad51-0164eac76170'
+    definition: '9'
+    specificBuildWithTriggering: true
+    buildVersionToDownload: 'latest'
+    tags: 'latest'
+    targetPath: '$(System.DefaultWorkingDirectory)/_hteo1337_UiRobot-AWS/'
 
 # - task: DownloadGitHubRelease@0
 #   inputs:
