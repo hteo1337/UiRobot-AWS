@@ -20,7 +20,6 @@ steps:
       continueOnError: true
       condition: succeededOrFailed()
 
-steps:
 - task: AmazonWebServices.aws-vsts-tools.S3Upload.S3Upload@1
   displayName: 'S3 Upload: git-test'
   inputs:
