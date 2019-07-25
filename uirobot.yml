@@ -170,33 +170,34 @@ Parameters:
 Mappings:
   AWSRegion2AMI:
     us-east-1:
-      Windows2016STD: ami-0d41aee8a57fdb850
-    us-west-2:
-      Windows2016STD: ami-0d705356e2616369c
-    us-west-1:
-      Windows2016STD: ami-000eddb6959c2403a
-    eu-west-1:
-      Windows2016STD: ami-0710d35aba99f0aa4
-    eu-west-2:
-      Windows2016STD: ami-0f9184740934f30e8
-    eu-central-1:
-      Windows2016STD: ami-09c346dac10213d49
-    ap-northeast-1:
-      Windows2016STD: ami-06506e1521d1970a6
-    ap-northeast-2:
-      Windows2016STD: ami-07ff3c5c1004e1307
-    ap-southeast-1:
-      Windows2016STD: ami-0fe0a34ed20d1e95f
-    ap-southeast-2:
-      Windows2016STD: ami-0a382fb734ac35f8d
-    ap-south-1:
-      Windows2016STD: ami-09a8de20f12de517c
+      Windows2016STD: ami-013e2b5127d181b0c
     us-east-2:
-      Windows2016STD: ami-096b2c9dc9336e7c4
+      Windows2016STD: ami-0e2c545d892567880
+    us-west-2:
+      Windows2016STD: ami-09380bd107b455fe7
+    us-west-1:
+      Windows2016STD: ami-0f82c8e9ef453b0fa
+    eu-west-1:
+      Windows2016STD: ami-09c6f606506004483
+    eu-west-2:
+      Windows2016STD: ami-016ed249dc46e6b40
+    eu-central-1:
+      Windows2016STD: ami-094fe24bfcc17d3a6
+    ap-northeast-1:
+      Windows2016STD: ami-0404c1383f6b870a2
+    ap-northeast-2:
+      Windows2016STD: ami-05a904a1ba965e4f3
+    ap-southeast-1:
+      Windows2016STD: ami-0016e4a9b8d089537
+    ap-southeast-2:
+      Windows2016STD: ami-0efea4c02b339a240
+    ap-south-1:
+      Windows2016STD: ami-0aecc0f82e27f4e05
     ca-central-1:
-      Windows2016STD: ami-07c0acebd4be32641
+      Windows2016STD: ami-0c5b05145a681494a
     sa-east-1:
-      Windows2016STD: ami-01adbf057d8fcb314
+      Windows2016STD: ami-0154801b61a29701a
+
 Resources:
   UiRobotSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
@@ -242,7 +243,7 @@ Resources:
             - - "<powershell> \n"
               - "Set-ExecutionPolicy Unrestricted -force \n"
               - "$localComputer = [adsi]\"WinNT://$env:computername\" \n"
-              - "$localUser = $localComputer.Create(\"User\", '"
+              - '$localUser = $localComputer.Create("User", '''
               - Ref: adminUsername
               - "') \n"
               - "$localUser.SetPassword('"
@@ -256,7 +257,7 @@ Resources:
               - "$localUser.UserFlags = 65536 \n"
               - "$localUser.SetInfo() \n"
               - "$localGroup = [adsi](\"WinNT://$env:computername/Administrators,Group\") \n"
-              - "$localGroup.add(\"WinNT://$env:computername/"
+              - '$localGroup.add("WinNT://$env:computername/'
               - Ref: adminUsername
               - "\") \n"
               - "powershell.exe -Command Invoke-WebRequest https://raw.githubusercontent.com/hteo1337/UiRobot/master/Setup/Install-UiRobot.ps1
